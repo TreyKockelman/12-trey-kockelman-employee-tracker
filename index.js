@@ -7,7 +7,6 @@ const db = require("./db");
 
 // Use this function to display the ascii art logo and to begin the main prompts
 function init() {
-
   loadMainPrompts()
 }
 
