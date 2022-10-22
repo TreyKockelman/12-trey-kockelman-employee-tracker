@@ -38,27 +38,35 @@ class DB {
   addDepartment(deptName) {
     return this.connection.promise().query("INSERT INTO department(name) VALUES(?)", deptName)};
 
+  getManagers() {
+    return this.connection.promise().query(
+    `SELECT concat(e.first_name, " ", e.last_name) AS name, e.id AS value
+    FROM employee e
+    LEFT JOIN employee e2 ON e2.id = e.manager_id 
+    WHERE e.manager_id  IS NULL`
+    )
+  }
+
+  getEmployees() {
+    return this.connection.promise().query(
+      `SELECT employee.id AS value, CONCAT(employee.first_name, " ", employee.last_name) AS name FROM employee`
+    );
+  }
+
   addRole(title, salary, depID) {
     return this.connection.promise().query("INSERT INTO role(title, salary, department_id) VALUES(?, ?, ?)", [title, salary, depID])};
 
   addEmployee(firstname, lastname, role, manager) {
     return this.connection.promise().query("INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES(?, ?, ?, ?)", [firstname, lastname, role, manager])};
 
-  // Add more class methods below for all the database operations needed.
-  // Sometimes you may need to pass an id value into a method so it knows 
-  //   how to find the correct record.
+  updateEmployee(employee, role) {
+    return this.connection.promise().query("UPDATE employee SET role_id = ? WHERE id = ?", [role, employee])
+  };
 
+  close() {
+    this.connection.end();
+  }
 
-
-
-
-
-  
-
-
-
-
-  
 }
 
 module.exports = new DB(connection);

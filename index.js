@@ -1,6 +1,5 @@
 const { prompt } = require("inquirer");
 const logo = require("asciiart-logo");
-require("console.table");
 
 // This file leads to a class we've created to contain all our database queries
 const db = require("./db");
@@ -49,7 +48,11 @@ function loadMainPrompts() {
         {
           name: "Update Employee Role",
           value: "UPDATE_EMPLOYEE_ROLE"
-        }
+        },
+        {
+          name: "Exit",
+          value: "EXIT"
+        },
       ]
     }
   ]).then(res => {
@@ -75,6 +78,12 @@ function loadMainPrompts() {
       case "ADD_EMPLOYEE":
         addEmployee();
         break;
+      case "UPDATE_EMPLOYEE_ROLE":
+        updateEmployee();
+        break;
+      case "EXIT":
+        db.close();
+        return;
     }
   }
 )}
@@ -126,7 +135,13 @@ function addDepartment() {
   })
 };
 
-function addRole() {
+async function addRole() {
+  let temp = await db.findAllDepartments();
+  let depts = [];
+  for ( const {id, name} of temp[0]) {
+    depts.push( {name : name, value : id})
+  }
+
   prompt([
     {
       type: 'input',
@@ -141,7 +156,7 @@ function addRole() {
     {
       type: 'list',
       message: "Enter Role Department ID",
-      choices: [{name: "Sales", value: 1}, {name: "Engineering", value: 2}, {name: "Finance", value: 3}, {name: "Legal", value: 4}],
+      choices: [...depts],
       name: 'role_depID',
     },
   ]).then(res => {
@@ -149,7 +164,20 @@ function addRole() {
   })
 };
 
-function addEmployee() {
+async function addEmployee() {
+  let tempRoles = await db.findAllRoles();
+  let roles = [];
+  for ( const {id, title} of tempRoles[0]) {
+    roles.push( {name : title, value : id})
+  }
+
+  let tempManager = await db.getManagers();
+  let managers = [];
+  for ( const {name, value} of tempManager[0]) {
+    managers.push( {name : name, value : value})
+  }
+  managers.push( {name: "None", value: "Null"})
+
   prompt([
     {
       type: 'input',
@@ -164,13 +192,13 @@ function addEmployee() {
     {
       type: 'list',
       message: "Enter Employee Role",
-      choices: [{name: "Sales Lead", value: 1}, {name: "Salesperson", value: 2}, {name: "Lead Engineer", value: 3}, {name: "Software Engineer", value: 4}, {name: "Account Manager", value: 5}, {name: "Accountant", value: 6}, {name: "Legal Team Lead", value: 7}, {name: "Lawyer", value: 8}],
+      choices: [...roles],
       name: 'role',
     },
     {
       type: 'list',
       message: "Enter Employee Manager",
-      choices: [{name: "John Doe", value: 1}, {name: "Ashley Rodriguez", value: 3}, {name: "Malia Brown", value: 5}, {name: "Sarah Lourd", value: 7}],
+      choices: [...managers],
       name: 'manager',
     },
   ]).then(res => {
@@ -178,20 +206,38 @@ function addEmployee() {
   })
 }
 
+async function updateEmployee() {
+  let tempRoles = await db.findAllRoles();
+  let roles = [];
+  for ( const {id, title} of tempRoles[0]) {
+    roles.push( {name : title, value : id})
+  }
+
+  let tempEmployee = await db.getEmployees();
+  let employees = [];
+  for ( const {value, name} of tempEmployee[0]) {
+    employees.push( {name : name, value : value})
+  }
+
+  prompt([
+    {
+      type: 'list',
+      message: "Choose Employee to Update",
+      choices: [...employees],
+      name: 'employee'
+    },
+    {
+      type: 'list',
+      message: "Updated Role",
+      choices: [...roles],
+      name: 'role',
+    },
+  ]).then(res => {
+    db.updateEmployee(res.employee, res.role).then(() => loadMainPrompts());
+  })
+}
+
 
 /* ======= END Controllers ============================================================ */
 
-
-
-
-
-/* 
-  You will write lots of other functions here for the other prompt options.
-  Note that some prompts will require you to provide more prompts, and these 
-  may need functions of their own.
-*/
-
-
-
-// Everything starts here!
 init();
