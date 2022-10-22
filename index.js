@@ -176,7 +176,7 @@ async function addEmployee() {
   for ( const {name, value} of tempManager[0]) {
     managers.push( {name : name, value : value})
   }
-  managers.push( {name: "None", value: "Null"})
+  managers.push( {name: "None", value: null})
 
   prompt([
     {

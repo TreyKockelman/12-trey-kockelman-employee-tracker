@@ -65,8 +65,7 @@ class DB {
 
   close() {
     this.connection.end();
-  }
-
-}
+  };
+};
 
 module.exports = new DB(connection);
