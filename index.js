@@ -1,5 +1,6 @@
 const { prompt } = require("inquirer");
 const logo = require("asciiart-logo");
+const cTable = require('console.table')
 
 // This file leads to a class we've created to contain all our database queries
 const db = require("./db");
