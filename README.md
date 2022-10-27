@@ -18,4 +18,4 @@
   If you have any questions feel free to go to my github account [TreyKockelman](https://github.com/TreyKockelman) or email me at [kockelmant@gmail.com](kockelmant@gmail.com).
 
   ## Demo Video
-  [Demo](https://app.castify.com/watch/40783859-53c8-47de-b2c3-080fc3468edd)
+  [Demo](https://drive.google.com/file/d/1gm2hfjrwB4D2LVJrR2ie0TWjK6A-nCzZ/view)
